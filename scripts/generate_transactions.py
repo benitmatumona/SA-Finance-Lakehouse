@@ -42,17 +42,17 @@ for row in data.itertuples():
         new_data["account_id"].append(row.account_id)
         new_data["transaction_date"].append(fake.date_between(open_date, end_date))
         new_data["transaction_type"].append(transaction_type),
-        new_data["transaction_channel"].append(merchant[transaction_type]),
+        new_data["transaction_channel"].append(random.choice(transaction_channel)),
         new_data["merchant_name"].append(merchant_name if transaction_type != "Salary" else "Employer"),
         new_data["amount"].append(amount),
         
-        if transaction_type in ["Salary", "Deposite"]:
+        if transaction_type in ["Salary", "Deposit"]:
             balance += amount  
         elif transaction_type == "EFT" and random.random() >= 0.5:
              balance += amount
         else:
             balance -= amount
-            
+
         new_data["reference"].append(reference),
         new_data["balance_after_transaction"].append(balance),
         new_data["is_fraud"].append(is_fraud)
