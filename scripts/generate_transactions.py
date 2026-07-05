@@ -42,7 +42,7 @@ for row in data.itertuples():
         new_data["account_id"].append(row.account_id)
         new_data["transaction_date"].append(fake.date_between(open_date, end_date))
         new_data["transaction_type"].append(transaction_type),
-        new_data["transaction_channel"].append(random.choice(transaction_channel)),
+        new_data["transaction_channel"].append(merchant[transaction_type]),
         new_data["merchant_name"].append(merchant_name if transaction_type != "Salary" else "Employer"),
         new_data["amount"].append(amount),
         balance = balance + amount if transaction_type == "Salary" else balance - amount
