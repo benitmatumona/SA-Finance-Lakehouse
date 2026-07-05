@@ -24,28 +24,28 @@ for row in data.itertuples():
     random_number_of_transactions = random.randint(3, 10)
     open_date = datetime.strptime(row.open_date, "%Y-%m-%d")
     end_date = datetime.strptime("2026-06-30", "%Y-%m-%d")
-    
+    balance = random_number_of_transactions * 5001
+
     for _ in range(random_number_of_transactions):
-        balance = random_number_of_transactions * 5001
         amount = random.randint(20, 5000)
         merchant_name = random.choice(merchant)
-        transaction_type = random.choice(transaction_types.keys())
+        transaction_type = random.choice(list(transaction_types.keys()))
         reference = transaction_types[transaction_type].replace("merchant_name", merchant_name)
         reference = "EFT DEPOSIT" if reference == "CASH DEPOSIT" and random.random() > 0.5 else reference
-        is_fraud = random.random() > 0.9
+        is_fraud = random.random() > 0.98
 
         new_data["transaction_id"].append(next(transaction_id)),
         new_data["account_id"].append(row.account_id)
         new_data["transaction_date"].append(fake.date_between(open_date, end_date))
-        new_data["transaction_type"].append(random.choice(transaction_types.keys())),
+        new_data["transaction_type"].append(transaction_type),
         new_data["transaction_channel"].append(random.choice(transaction_channel)),
-        new_data["merchant_name"].append(merchant_name),
+        new_data["merchant_name"].append(merchant_name if transaction_type != "Salary" else "Employer"),
         new_data["amount"].append(amount),
+        balance = balance + amount if transaction_type == "Salary" else balance - amount
         new_data["reference"].append(reference),
-        new_data["balance_after_transaction"].append(
-            balance + amount if transaction_type == "Salary" else balance - amount
-            ),
+        new_data["balance_after_transaction"].append(balance),
         new_data["is_fraud"].append(is_fraud)
 
 
 df = pd.DataFrame(new_data)
+df.to_csv("data/raw/transactions.csv", index=False)
