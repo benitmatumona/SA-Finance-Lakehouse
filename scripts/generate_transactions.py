@@ -45,7 +45,14 @@ for row in data.itertuples():
         new_data["transaction_channel"].append(merchant[transaction_type]),
         new_data["merchant_name"].append(merchant_name if transaction_type != "Salary" else "Employer"),
         new_data["amount"].append(amount),
-        balance = balance + amount if transaction_type == "Salary" else balance - amount
+        
+        if transaction_type in ["Salary", "Deposite"]:
+            balance += amount  
+        elif transaction_type == "EFT" and random.random() >= 0.5:
+             balance += amount
+        else:
+            balance -= amount
+            
         new_data["reference"].append(reference),
         new_data["balance_after_transaction"].append(balance),
         new_data["is_fraud"].append(is_fraud)
