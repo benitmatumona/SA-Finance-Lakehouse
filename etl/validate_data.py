@@ -42,7 +42,17 @@ def check_account_foreign_keys():
 
 
 def validate():
-    pass
+    check_duplicates()
+    check_missing_values()
+    check_primary_keys()
+    check_account_types()
+    check_provinces()
+    check_transaction_amounts()
+    check_transaction_dates()
+    check_customer_foreign_keys()
+    check_account_foreign_keys()
+
+    print("Validation passed.")
 
 
 if __name__ == "__main__":
