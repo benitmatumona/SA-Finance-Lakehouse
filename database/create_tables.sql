@@ -12,7 +12,7 @@ CREATE TABLE accounts(
     open_date DATE NOT NULL,
 
     CONSTRAINT fk_accounts_customers 
-        FOREIGN KEY customer_id 
+        FOREIGN KEY (customer_id) 
         REFERENCES customers(customer_id)
 );
 
@@ -25,9 +25,9 @@ CREATE TABLE transactions(
     amount INT NOT NULL,
     reference VARCHAR(100) NOT NULL,
     balance_after_transaction INT NOT NULL,
-    if_fraud BOOLEAN,
+    is_fraud BOOLEAN,
 
     CONSTRAINT fk_transactions_accounts 
-        FOREIGN KEY account_id 
+        FOREIGN KEY (account_id) 
         REFERENCES accounts(account_id)
 );
