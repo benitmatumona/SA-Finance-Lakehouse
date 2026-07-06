@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 import psycopg2
 
@@ -10,6 +9,7 @@ transactions_df = pd.read_csv("data/raw/transactions.csv")
 username = "postgres"
 password = ""
 database = "south_africa_bank"
+conn = None
 
 
 try:
@@ -70,8 +70,10 @@ try:
             )
 
         conn.commit()
-except Exception:
-    conn.rollback()
+except Exception as e:
+    if conn:
+        conn.rollback()
+    print(e)
 
 finally:
     conn.close()
