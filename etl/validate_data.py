@@ -11,8 +11,16 @@ def check_duplicates(df: pd.DataFrame, column_name: str) -> bool:
     return True
 
 
-def check_missing_values():
-    pass
+def check_missing_values(
+    df: pd.DataFrame,
+    required_columns: list[str]
+) -> bool:
+    
+    for column in required_columns:
+        if df[column].isnull().any():
+            raise ValueError(f"Missing values found in '{column}'.")
+    return True
+            
 
 
 def check_primary_keys():
