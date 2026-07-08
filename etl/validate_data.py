@@ -7,7 +7,9 @@ transactions_df = pd.read_csv()
 
 def check_duplicates(df: pd.DataFrame, column_name: str) -> bool:
     if df[column_name].duplicated().any():
-        raise ValueError(f"Duplicate values found in '{column_name}'.")
+        raise ValueError(
+            f"Duplicate values found in '{column_name}'."
+        )
     return True
 
 
@@ -18,7 +20,9 @@ def check_missing_values(
     
     for column in required_columns:
         if df[column].isnull().any():
-            raise ValueError(f"Missing values found in '{column}'.")
+            raise ValueError(
+                f"Missing values found in '{column}'."
+            )
     return True
             
 
@@ -39,7 +43,9 @@ def check_allowed_types(
         if not is_valid:
             invalid_values.add(value)
     if invalid_values:
-        raise ValueError(f"Invalid {column_name} found '{sorted(invalid_values)}'.")
+        raise ValueError(
+            f"Invalid {column_name} found '{sorted(invalid_values)}'."
+        )
     return True    
 
 
