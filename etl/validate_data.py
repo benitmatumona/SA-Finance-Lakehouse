@@ -27,18 +27,19 @@ def check_primary_keys():
     pass
 
 
-def check_account_types(
+def check_allowed_types(
     df: pd.DataFrame,
-    valid_account_types: list[str]    
+    column_name: str,
+    allowed_types: list[str]    
 )-> bool:
-    booleans: list[bool] = df["account_type"].isin(valid_account_types)
-    invalid_accounts = set()
+    valid_mask: list[bool] = df[column_name].isin(allowed_types)
+    invalid_values = set()
 
-    for account_type, is_valid in zip(df["account_type"], booleans):
+    for value, is_valid in zip(df[column_name], valid_mask):
         if not is_valid:
-            invalid_accounts.add(account_type)
-    if invalid_accounts:
-        raise ValueError(f"Invalid accounts found '{sorted(invalid_accounts)}'.")
+            invalid_values.add(value)
+    if invalid_values:
+        raise ValueError(f"Invalid {column_name} found '{sorted(invalid_values)}'.")
     return True    
 
 
@@ -46,8 +47,21 @@ def check_provinces():
     pass
 
 
-def check_transaction_amounts():
-    pass
+def check_transaction_amounts(
+        df: pd.DataFrame
+)-> bool:
+    if df["amount"].isna().any():
+        raise ValueError(f"Missing values found in the column 'amount'.")
+    elif df[df["amount"] <= 0].any():
+        raise ValueError(f"One or more values that were less or equal to"
+                         " zero  was found in The column 'amount'."
+                         ) 
+    elif df[df["amount"] > 10_000_000].any():
+        raise ValueError(
+            f"One or more values in The column 'amount' is greater "
+            "than 10 000 000"
+            )
+    return True
 
 
 def check_transaction_dates():
@@ -66,7 +80,7 @@ def validate():
     check_duplicates()
     check_missing_values()
     check_primary_keys()
-    check_account_types()
+    check_allowed_types()
     check_provinces()
     check_transaction_amounts()
     check_transaction_dates()
