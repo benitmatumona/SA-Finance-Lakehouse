@@ -1,5 +1,4 @@
 import pandas as pd
-from datetime import date
 
 
 customers_df = pd.read_csv(...)
@@ -26,7 +25,6 @@ def check_missing_values(
                 f"Missing values found in '{column}'."
             )
     return True
-            
 
 
 def check_primary_keys():
@@ -83,14 +81,16 @@ def check_transaction_dates(
         transactions_df[
             ["transaction_id", "account_id", "transaction_date"]
         ], 
-        accounts_df["account_id", "open_date"]
+        accounts_df[
+            ["account_id", "open_date"]
+        ]
         , on="account_id", how="inner"
     )
     invalid_dates = df[
         pd.to_datetime(df["transaction_date"]) < pd.to_datetime(df["open_date"])
-        or pd.to_datetime(df["transaction_date"]) > date().today()
+        or pd.to_datetime(df["transaction_date"]) > pd.to_datetime("today")
     ]
-    if df.shape[0] > 0:
+    if invalid_dates.shape[0] > 0:
         raise ValueError("\n".join([
             f"{row.transaction_id},{row.account_id},"
             f"{row.open_date},{row.transaction_date}" 
