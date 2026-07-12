@@ -88,7 +88,7 @@ def check_transaction_dates(
     )
     invalid_dates = df[
         pd.to_datetime(df["transaction_date"]) < pd.to_datetime(df["open_date"])
-        or pd.to_datetime(df["transaction_date"]) > pd.to_datetime("today")
+        | pd.to_datetime(df["transaction_date"]) > pd.to_datetime("today")
     ]
     if invalid_dates.shape[0] > 0:
         raise ValueError("\n".join([
