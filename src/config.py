@@ -12,14 +12,13 @@ VALID_PROVINCES = [
 
 ACCOUNT_TYPES = ["Cheque", "Savings", "Credit", "Business"]
 
-TRANSACTION_CHANNELS = [
-    "ATM",
-    "POS",
-    "Online",
-    "Mobile App",
-    "Branch",
-    "Online Banking",
-]
+TRANSACTION_CHANNELS = {
+    "Deposit": ["ATM", "Branch"],
+    "Withdrawal": ["ATM", "Branch"],
+    "Card Purchase": ["POS", "Online"],
+    "Salary": ["Online Banking"],
+    "EFT": ["Online Banking", "Mobile App"],
+}
 
 TRANSACTION_TYPES = {
     "Deposit": "CASH DEPOSIT",
