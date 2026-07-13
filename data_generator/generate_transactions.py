@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from datetime import datetime
 from faker import Faker
-from src.config import TRANSACTION_CHANNELS
+from src.config import TRANSACTION_CHANNELS, TRANSACTION_TYPES
 
 
 os.makedirs("data/raw", exist_ok=True)
@@ -25,13 +25,7 @@ new_data = {
     "balance_after_transaction": [],
     "is_fraud": [],
 }
-transaction_types = {
-    "Deposit": "CASH DEPOSIT",
-    "Withdrawal": "ATM CASH WITHDRAWAL",
-    "Card Purchase": "merchant_name",
-    "EFT": "EFT TO merchant_name",
-    "Salary": "MONTHLY SALARY",
-}
+
 
 merchant = {
     "Deposit": ["This Bank"],
@@ -68,9 +62,9 @@ for row in data.itertuples():
 
     for _ in range(random_number_of_transactions):
         amount = random.randint(20, 5000)
-        transaction_type = random.choice(list(transaction_types.keys()))
+        transaction_type = random.choice(list(TRANSACTION_TYPES.keys()))
         merchant_name = random.choice(merchant[transaction_type])
-        reference = transaction_types[transaction_type].replace(
+        reference = TRANSACTION_TYPES[transaction_type].replace(
             "merchant_name", merchant_name
         )
         reference = (

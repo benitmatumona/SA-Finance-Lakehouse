@@ -21,7 +21,7 @@ for row in data.itertuples():
 
     for account_type in random_accounts:
         start_date = datetime.strptime(row.join_date, "%Y-%m-%d")
-        end_date =pd.Timestamp.today()
+        end_date = pd.Timestamp.today()
         open_date = fake.date_between(start_date, end_date)
         (new_data["account_id"].append(next(account_id)),)
         new_data["customer_id"].append(row.customer_id)
