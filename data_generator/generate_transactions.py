@@ -74,7 +74,7 @@ for row in data.itertuples():
             else reference
         )
         
-        transaction_channel = random.choice(TRANSACTION_CHANNELS)
+        transaction_channel = random.choice(TRANSACTION_CHANNELS[transaction_type])
         if amount > 4500 and transaction_channel == "ATM":
             is_fraud = random.random() < 0.20
         else:
