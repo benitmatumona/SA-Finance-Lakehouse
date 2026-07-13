@@ -2,7 +2,8 @@ CREATE TABLE customers(
     customer_id INT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     province VARCHAR(100) NOT NULL,
-    join_date date NOT NULL
+    join_date date NOT NULL,
+    date_of_birth DATE NOT NULL
 );
 
 CREATE TABLE accounts(
@@ -10,7 +11,6 @@ CREATE TABLE accounts(
     customer_id INT NOT NULL,
     account_type VARCHAR(100) NOT NULL,
     open_date DATE NOT NULL,
-    date_of_birth DATE NOT NULL
 
     CONSTRAINT fk_accounts_customers 
         FOREIGN KEY (customer_id) 
