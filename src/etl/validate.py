@@ -130,8 +130,8 @@ def validate(customers_df, accounts_df, transactions_df):
 
     check_allowed_types(
         transactions_df,
-        "transaction_type",
-        ["ATM", "Mobile App", "Online Banking", "Branch", "POS"],
+        "transaction_channel",
+        ["ATM", "Mobile App", "Online Banking", "Branch", "POS", "Online"],
     )
 
     check_allowed_types(
@@ -150,9 +150,9 @@ def validate(customers_df, accounts_df, transactions_df):
         ],
     )
 
-    check_foreign_keys(accounts_df, customers_df, "customer_id", "customer_id")
+    check_foreign_keys(accounts_df, customers_df, "account_id_id", "account_id")
 
-    check_foreign_keys(transactions_df, accounts_df, "transaction_id", "transaction_id")
+    check_foreign_keys(transactions_df, accounts_df, "account_id", "account_id")
 
     check_transaction_amounts(transactions_df, "amount")
 
