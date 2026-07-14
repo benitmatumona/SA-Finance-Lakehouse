@@ -14,21 +14,6 @@ data = pd.read_csv("data/raw/accounts.csv")
 fake = Faker()
 transaction_id = itertools.count(start=300001)
 
-def get_new_df():
-    return {
-        "transaction_id": [],
-        "account_id": [],
-        "transaction_date": [],
-        "transaction_type": [],
-        "transaction_channel": [],
-        "merchant_name": [],
-        "amount": [],
-        "reference": [],
-        "balance_after_transaction": [],
-        "is_fraud": [],
-    }
-
-
 
 def generate_transactions(data: pd.DataFrame)-> pd.DataFrame:
     new_data = get_new_df()
@@ -89,6 +74,21 @@ def generate_transactions(data: pd.DataFrame)-> pd.DataFrame:
             new_data["balance_after_transaction"].append(balance)
             new_data["is_fraud"].append(is_fraud)
     return pd.DataFrame(new_data)
+
+
+def get_new_df():
+    return {
+        "transaction_id": [],
+        "account_id": [],
+        "transaction_date": [],
+        "transaction_type": [],
+        "transaction_channel": [],
+        "merchant_name": [],
+        "amount": [],
+        "reference": [],
+        "balance_after_transaction": [],
+        "is_fraud": [],
+    }
 
 
 if __name__ == "__main__":
