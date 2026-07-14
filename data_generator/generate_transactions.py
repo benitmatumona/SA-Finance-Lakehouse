@@ -29,11 +29,10 @@ def generate_transactions(data: pd.DataFrame)-> pd.DataFrame:
         "is_fraud": [],
     }
 
-
+    end_date = pd.Timestamp.today()
     for row in data.itertuples():
         random_number_of_transactions = random.randint(3, 10)
         open_date = datetime.strptime(row.open_date, "%Y-%m-%d")
-        end_date = pd.Timestamp.today()
         balance = random_number_of_transactions * 5001
 
         for _ in range(random_number_of_transactions):
