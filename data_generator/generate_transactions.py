@@ -8,9 +8,7 @@ from src.config import TRANSACTION_CHANNELS, TRANSACTION_TYPES, MERCHANTS
 
 
 def generate_transactions(data: pd.DataFrame) -> pd.DataFrame:
-    
-    TransactionData = dict[str, list[Any]]
-    new_data: TransactionData = {
+    new_data: dict[str, list[Any]] = {
         "transaction_id": [],
         "account_id": [],
         "transaction_date": [],
