@@ -3,6 +3,7 @@ import os
 import itertools
 import pandas as pd
 from datetime import datetime
+from typing import Any
 from faker import Faker
 from src.config import ACCOUNT_TYPES
 
@@ -13,7 +14,7 @@ fake = Faker()
 account_id = itertools.count(start=200001)
 
 
-new_data = {"account_id": [], "customer_id": [], "account_type": [], "open_date": []}
+new_data: dict[str, list[Any]] = {"account_id": [], "customer_id": [], "account_type": [], "open_date": []}
 
 for row in data.itertuples():
     random_number_of_accounts = random.randint(1, 3)
