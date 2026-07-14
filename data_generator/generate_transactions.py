@@ -2,60 +2,59 @@ import random
 import itertools
 import os
 import pandas as pd
-from datetime import datetime
+from typing import Any
 from faker import Faker
-from src.config import (
-    TRANSACTION_CHANNELS, TRANSACTION_TYPES, MERCHANTS
-)
+from src.config import TRANSACTION_CHANNELS, TRANSACTION_TYPES, MERCHANTS
 
 
-os.makedirs("data/raw", exist_ok=True)
-data = pd.read_csv("data/raw/accounts.csv")
-fake = Faker()
-transaction_id = itertools.count(start=300001)
+def generate_transactions(data: pd.DataFrame) -> pd.DataFrame:
+    new_data: dict[str, list[Any]] = {
+        "transaction_id": [],
+        "account_id": [],
+        "transaction_date": [],
+        "transaction_type": [],
+        "transaction_channel": [],
+        "merchant_name": [],
+        "amount": [],
+        "reference": [],
+        "balance_after_transaction": [],
+        "is_fraud": [],
+    }
 
-
-def generate_transactions(data: pd.DataFrame)-> pd.DataFrame:
-    new_data = get_new_df()
-    end_date = pd.Timestamp.today()
-    
     for row in data.itertuples():
         random_number_of_transactions = random.randint(3, 10)
-        open_date = datetime.strptime(row.open_date, "%Y-%m-%d")
+        open_date = pd.to_datetime(row.open_date)
+        end_date = pd.Timestamp.today()
         balance = random_number_of_transactions * 5001
 
         for _ in range(random_number_of_transactions):
             amount = random.randint(20, 5000)
-            transaction_type = random.choice(tuple(TRANSACTION_TYPES))
+            transaction_type = random.choice(tuple(TRANSACTION_TYPES.keys()))
             merchant_name = random.choice(MERCHANTS[transaction_type])
             reference = TRANSACTION_TYPES[transaction_type].replace(
                 "merchant_name", merchant_name
             )
-            
+
             reference = (
                 "EFT DEPOSIT"
                 if reference == "CASH DEPOSIT" and random.random() > 0.5
                 else reference
             )
-            
-            transaction_channel = random.choice(TRANSACTION_CHANNELS[transaction_type])
-            if amount > 4500 and transaction_channel == "ATM":
-                is_fraud = random.random() <= 0.20
-            elif transaction_type == "Card Purchase" and merchant_name == "Uber" and amount > 3000:
-                is_fraud = random.random() <= 0.12
-            else:
-                is_fraud = random.random() <= 0.02
 
+            transaction_channel = random.choice(TRANSACTION_CHANNELS[transaction_type])
+            is_fraud = is_fraud()
             new_data["transaction_id"].append(next(transaction_id))
             new_data["account_id"].append(row.account_id)
-            new_data["transaction_date"].append(fake.date_time_between(open_date, end_date))
+            new_data["transaction_date"].append(
+                fake.date_time_between(open_date, end_date)
+            )
             new_data["transaction_type"].append(transaction_type)
             new_data["transaction_channel"].append(transaction_channel)
-            
+
             new_data["merchant_name"].append(
                 merchant_name if transaction_type != "Salary" else "Employer"
             )
-            
+
             new_data["amount"].append(amount)
 
             is_incoming = random.random() >= 0.5
@@ -76,21 +75,30 @@ def generate_transactions(data: pd.DataFrame)-> pd.DataFrame:
     return pd.DataFrame(new_data)
 
 
-def get_new_df():
-    return {
-        "transaction_id": [],
-        "account_id": [],
-        "transaction_date": [],
-        "transaction_type": [],
-        "transaction_channel": [],
-        "merchant_name": [],
-        "amount": [],
-        "reference": [],
-        "balance_after_transaction": [],
-        "is_fraud": [],
-    }
+def is_fraud(
+    amount: int,
+    transaction_channel: str,
+    transaction_type: str,
+    merchant_name: str,
+) -> bool:
+    if amount > 4500 and transaction_channel == "ATM":
+        is_fraud = random.random() <= 0.20
+    elif (
+        transaction_type == "Card Purchase"
+        and merchant_name == "Uber"
+        and amount > 3000
+    ):
+        is_fraud = random.random() <= 0.12
+    else:
+        is_fraud = random.random() <= 0.02
+    return is_fraud
 
 
 if __name__ == "__main__":
+    os.makedirs("data/raw", exist_ok=True)
+    data = pd.read_csv("data/raw/accounts.csv")
+    fake = Faker()
+    transaction_id = itertools.count(start=300001)
     generated_df = generate_transactions(data)
     generated_df.to_csv("data/raw/transactions.csv", index=False)
+    os.makedirs("data/raw", exist_ok=True)

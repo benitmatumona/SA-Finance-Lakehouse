@@ -23,9 +23,9 @@ for row in data.itertuples():
         start_date = datetime.strptime(row.join_date, "%Y-%m-%d")
         end_date = pd.Timestamp.today()
         open_date = fake.date_between(start_date, end_date)
-        (new_data["account_id"].append(next(account_id)),)
+        new_data["account_id"].append(next(account_id))
         new_data["customer_id"].append(row.customer_id)
-        (new_data["account_type"].append(account_type),)
+        new_data["account_type"].append(account_type)
         new_data["open_date"].append(open_date)
 
 df = pd.DataFrame(new_data)
