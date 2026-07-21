@@ -2,6 +2,12 @@ import logging
 import pandas as pd
 import psycopg2
 from psycopg2.extensions import cursor
+from src.config import (
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+    DB_HOST
+)
 
 
 logging.basicConfig(
@@ -19,7 +25,7 @@ def load(
     conn = None
     
     try:
-        conn = connect(database, username, password, "localhost")
+        conn = connect(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST)
 
         with conn.cursor() as cur:
             load_customers(customers_df, cur)
@@ -100,9 +106,4 @@ if __name__ == "__main__":
     customers_df = pd.read_csv("data/raw/customers.csv")
     accounts_df = pd.read_csv("data/raw/accounts.csv")
     transactions_df = pd.read_csv("data/raw/transactions.csv")
-
-    username = "postgres"
-    password = ""
-    database = "south_africa_bank"
-
     load(customers_df, accounts_df, transactions_df)
