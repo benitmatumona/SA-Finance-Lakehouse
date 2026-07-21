@@ -1,16 +1,34 @@
+import logging
 import pandas as pd
 import psycopg2
 
 
-customers_df = pd.read_csv("data/raw/customers.csv")
-accounts_df = pd.read_csv("data/raw/accounts.csv")
-transactions_df = pd.read_csv("data/raw/transactions.csv")
+def load(
+    customers_df: pd.DataFrame,
+    accounts_df: pd.DataFrame,
+    transactions_df: pd.DataFrame,
+) -> None:
+    
+    conn = None
+    load_customers(customers_df)
+    load_accounts(accounts_df)
+    load_transactions(transactions_df)
 
-username = "postgres"
-password = ""
-database = "south_africa_bank"
-conn = None
+    try:
+        conn = connect(database, username, password, "localhost")
 
+        with conn.cursor() as cur:
+            load(customers_df, accounts_df, transactions_df)
+            conn.commit()
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        print(e)
+
+    finally:
+        if conn:
+            conn.close()
 
 
 def connect(
@@ -70,27 +88,13 @@ def load_transactions() -> None:
         )
 
 
-def load(
-    customers_df: pd.DataFrame,
-    accounts_df: pd.DataFrame,
-    transactions_df: pd.DataFrame,
-) -> None:
-    load_customers(customers_df)
-    load_accounts(accounts_df)
-    load_transactions(transactions_df)
+if __name__ == "__main__":
+    customers_df = pd.read_csv("data/raw/customers.csv")
+    accounts_df = pd.read_csv("data/raw/accounts.csv")
+    transactions_df = pd.read_csv("data/raw/transactions.csv")
 
-try:
-    conn = connect(database, username, password, "localhost")
+    username = "postgres"
+    password = ""
+    database = "south_africa_bank"
 
-    with conn.cursor() as cur:
-        load(customers_df, accounts_df, transactions_df)
-        conn.commit()
-
-except Exception as e:
-    if conn:
-        conn.rollback()
-    print(e)
-
-finally:
-    if conn:
-        conn.close()
+    load(customers_df, accounts_df, transactions_df)
