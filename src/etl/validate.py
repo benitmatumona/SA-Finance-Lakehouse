@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import logging
 from src.config import (
     VALID_PROVINCES,
     ACCOUNT_TYPES,
@@ -147,7 +148,7 @@ def validate(
 
     check_transaction_dates(transactions_df, accounts_df)
 
-    print("Validation passed.")
+    logging.info("Validation passed.")
 
 
 if __name__ == "__main__":
