@@ -87,3 +87,5 @@ DB_USER = "postgres"
 DB_PASSWORD = ""
 DB_NAME = "south_africa_bank"
 DB_HOST = "localhost"
+
+BULK_INSERT_PAGE_SIZE = 1000

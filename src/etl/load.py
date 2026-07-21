@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 import psycopg2
+from typing import Any
 from psycopg2.extensions import cursor as Cursor
 from psycopg2.extras import execute_values
 from src.config import (
@@ -10,8 +11,8 @@ from src.config import (
     DB_HOST,
     CUSTOMER_SQL,
     ACCOUNT_SQL,
-    TRANSACTION_SQL
-
+    TRANSACTION_SQL,
+    BULK_INSERT_PAGE_SIZE
 )
 
 
@@ -42,17 +43,17 @@ def load(
     try:
         with connect(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST) as conn:
             with conn.cursor() as cur:
-                logging.info("loading customers...")
+                logging.info("loading %d customers...", len(customers_df))
                 load_customers(customers_df, cur)
-                logging.info("loading accounts...")
+                logging.info("loading %d accounts...", len(accounts_df))
                 load_accounts(accounts_df, cur)
-                logging.info("loading transactions...")
+                logging.info("loading %d transactions...", len(transactions_df))
                 load_transactions(transactions_df, cur)
             
         logging.info("Data successfully loaded into PostgreSQL.")
 
-    except Exception as e:
-        logging.exception(f"Database load failed. {e}")
+    except psycopg2.Error:
+        logging.exception("Database load failed.")
 
 
 def connect(
@@ -66,9 +67,9 @@ def connect(
     )
 
 
-def load_customers(customers_df: pd.DataFrame, cur: Cursor) -> None:
+def load_customers(df: pd.DataFrame, cur: Cursor) -> None:
     rows = list(
-        customers_df.itertuples(index=False, name=None)
+        df.itertuples(index=False, name=None)
     )
     
     bulk_insert(
@@ -78,9 +79,9 @@ def load_customers(customers_df: pd.DataFrame, cur: Cursor) -> None:
     )
 
 
-def load_accounts(accounts_df: pd.DataFrame, cur: Cursor) -> None:    
+def load_accounts(df: pd.DataFrame, cur: Cursor) -> None:    
     rows = list(
-        accounts_df.itertuples(index=False, name=None)
+        df.itertuples(index=False, name=None)
     )
     
     bulk_insert(
@@ -90,9 +91,9 @@ def load_accounts(accounts_df: pd.DataFrame, cur: Cursor) -> None:
     )
 
 
-def load_transactions(transactions_df: pd.DataFrame, cur: Cursor) -> None:
+def load_transactions(df: pd.DataFrame, cur: Cursor) -> None:
     rows = list(
-        transactions_df.itertuples(index=False, name=None)
+        df.itertuples(index=False, name=None)
     )
     bulk_insert(    
         cur,
@@ -104,13 +105,13 @@ def load_transactions(transactions_df: pd.DataFrame, cur: Cursor) -> None:
 def bulk_insert(
     cur: Cursor,
     sql: str,
-    rows: list[tuple],
+    rows: list[tuple[Any]],
 ) -> None:
     execute_values(
         cur,
         sql,
         rows,
-        page_size=1000
+        page_size=BULK_INSERT_PAGE_SIZE
     )
 
 
