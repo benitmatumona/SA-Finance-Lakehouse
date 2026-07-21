@@ -75,15 +75,15 @@ def load(
     accounts_df: pd.DataFrame,
     transactions_df: pd.DataFrame,
 ) -> None:
-    raise ValueError
+    load_customers(customers_df)
+    load_accounts(accounts_df)
+    load_transactions(transactions_df)
 
 try:
     conn = connect(database, username, password, "localhost")
 
     with conn.cursor() as cur:
-        load_customers(customers_df)
-        load_accounts(accounts_df)
-        load_transactions(transactions_df)
+        load(customers_df, accounts_df, transactions_df)
         conn.commit()
 
 except Exception as e:
