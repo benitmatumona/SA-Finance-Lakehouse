@@ -4,13 +4,9 @@ from src.config import (
     VALID_PROVINCES,
     ACCOUNT_TYPES,
     TRANSACTION_TYPES,
-    TRANSACTION_CHANNELS,
+    ALL_TRANSACTION_CHANNELS,
+    MAX_TRANSACTION_AMOUNT
 )
-
-os.makedirs("data/raw", exist_ok=True)
-customers_df = pd.read_csv("data/raw/customers.csv")
-accounts_df = pd.read_csv("data/raw/accounts.csv")
-transactions_df = pd.read_csv("data/raw/transactions.csv")
 
 
 def check_duplicates(df: pd.DataFrame, column_name: str) -> bool:
@@ -36,13 +32,11 @@ def check_allowed_types(
     )
 
     if invalid_values:
-        raise ValueError(f"Invalid {column_name} found '{sorted(invalid_values)}'.")
+        raise ValueError(f"Invalid {column_name} found '{invalid_values}'.")
     return True
 
 
 def check_transaction_amounts(df: pd.DataFrame) -> bool:
-    MAX_TRANSACTION_AMOUNT = 10_000_000
-
     if (df["amount"].isna()).any():
         raise ValueError(f"Missing values found in the column 'amount'.")
     if (df["amount"] <= 0).any():
@@ -133,18 +127,10 @@ def validate(
         list(TRANSACTION_TYPES.keys()),
     )
 
-    allowed_types = sorted(
-        {
-            channel 
-            for channels in TRANSACTION_CHANNELS.values()
-            for channel in channels
-        }
-    )
-
     check_allowed_types(
         transactions_df,
         "transaction_channel",
-        allowed_types,
+        ALL_TRANSACTION_CHANNELS,
     )
 
     check_allowed_types(
@@ -165,4 +151,8 @@ def validate(
 
 
 if __name__ == "__main__":
+    os.makedirs("data/raw", exist_ok=True)
+    customers_df = pd.read_csv("data/raw/customers.csv")
+    accounts_df = pd.read_csv("data/raw/accounts.csv")
+    transactions_df = pd.read_csv("data/raw/transactions.csv")
     validate(customers_df, accounts_df, transactions_df)
