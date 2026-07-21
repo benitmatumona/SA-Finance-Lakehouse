@@ -63,10 +63,9 @@ def connect(
 
 
 def load_customers(customers_df: pd.DataFrame, cur: Cursor) -> None:
-    rows = [
-        (row.customer_id, row.full_name, row.province, row.join_date)
-        for row in customers_df.itertuples()
-    ]
+    rows = list(
+        customers_df.itertuples(index=False, name=None)
+    )
     
     execute_values(
         cur,
@@ -79,10 +78,9 @@ def load_customers(customers_df: pd.DataFrame, cur: Cursor) -> None:
 
 
 def load_accounts(accounts_df: pd.DataFrame, cur: Cursor) -> None:    
-    rows = [
-        (row.account_id, row.customer_id, row.account_type, row.open_date)
-        for row in accounts_df.itertuples()
-    ]
+    rows = list(
+        accounts_df.itertuples(index=False, name=None)
+    )
     
     execute_values(
         cur,
@@ -95,21 +93,9 @@ def load_accounts(accounts_df: pd.DataFrame, cur: Cursor) -> None:
 
 
 def load_transactions(transactions_df: pd.DataFrame, cur: Cursor) -> None:
-    rows = [
-        (
-            row.transaction_id,
-            row.account_id,
-            row.transaction_date,
-            row.transaction_type,
-            row.transaction_channel,
-            row.merchant_name,
-            row.amount,
-            row.reference,
-            row.balance_after_transaction,
-            row.is_fraud,
-        )
-    for row in transactions_df.itertuples()
-    ]
+    rows = list(
+        transactions_df.itertuples(index=False, name=None)
+    )
     execute_values(    
         cur,
         """
