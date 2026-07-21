@@ -16,6 +16,19 @@ logging.basicConfig(
 )
 
 
+def read_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    customers_df = pd.read_csv("data/raw/customers.csv")
+    accounts_df = pd.read_csv(
+        "data/raw/accounts.csv", 
+        parse_dates=["open_date"]
+    )
+    transactions_df = pd.read_csv(
+        "data/raw/transactions.csv", 
+        parse_dates=["transaction_date"]
+    )
+    return customers_df, accounts_df, transactions_df
+
+
 def load(
     customers_df: pd.DataFrame,
     accounts_df: pd.DataFrame,
@@ -92,13 +105,5 @@ def load_transactions(transactions_df: pd.DataFrame, cur: Cursor) -> None:
 
 
 if __name__ == "__main__":
-    customers_df = pd.read_csv("data/raw/customers.csv")
-    accounts_df = pd.read_csv(
-        "data/raw/accounts.csv", 
-        parse_dates=["open_date"]
-    )
-    transactions_df = pd.read_csv(
-        "data/raw/transactions.csv", 
-        parse_dates=["transaction_date"]
-    )
+    customers_df, accounts_df, transactions_df = read_data()
     load(customers_df, accounts_df, transactions_df)
