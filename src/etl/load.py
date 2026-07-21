@@ -25,7 +25,7 @@ def connect(
     return conn
 
 
-def load_customers(df: pd.DataFrame, *columns)-> None:
+def load_customers(df: pd.DataFrame)-> None:
     
     for row in df.itertuples():
         cur.execute(
@@ -37,20 +37,37 @@ def load_customers(df: pd.DataFrame, *columns)-> None:
         )
 
 
-def get_coloumn_list(columns: list[str]):
-    return ','.join([column for column in columns])[:-1]
-
-
-def get_prameterised_query(columns: list[str]):
-    return ','.join(["%s" for _ in range(len(columns))])
-
-
-def load_accounts():
-    raise ValueError
+def load_accounts(accounts_df: pd.DataFrame)-> None:    
+    for row in accounts_df.itertuples():
+        cur.execute(
+            """
+            INSERT INTO accounts (account_id, customer_id, account_type, open_date)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (row.account_id, row.customer_id, row.account_type, row.open_date),
+        )
 
 
 def load_transactions():
-    raise ValueError
+    for row in transactions_df.itertuples():
+        cur.execute(
+            """
+            INSERT INTO transactions (transaction_id, account_id, transaction_date, transaction_type,
+            merchant_name, amount, reference, balance_after_transaction, is_fraud)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                row.transaction_id,
+                row.account_id,
+                row.transaction_date,
+                row.transaction_type,
+                row.merchant_name,
+                row.amount,
+                row.reference,
+                row.balance_after_transaction,
+                row.is_fraud,
+            ),
+        )
 
 
 def load():
@@ -61,37 +78,10 @@ try:
 
     with conn.cursor() as cur:
         load_customers(customers_df)
-
-        for row in accounts_df.itertuples():
-            cur.execute(
-                """
-                INSERT INTO accounts (account_id, customer_id, account_type, open_date)
-                VALUES (%s, %s, %s, %s)
-                """,
-                (row.account_id, row.customer_id, row.account_type, row.open_date),
-            )
-
-        for row in transactions_df.itertuples():
-            cur.execute(
-                """
-                INSERT INTO transactions (transaction_id, account_id, transaction_date, transaction_type,
-                merchant_name, amount, reference, balance_after_transaction, is_fraud)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                """,
-                (
-                    row.transaction_id,
-                    row.account_id,
-                    row.transaction_date,
-                    row.transaction_type,
-                    row.merchant_name,
-                    row.amount,
-                    row.reference,
-                    row.balance_after_transaction,
-                    row.is_fraud,
-                ),
-            )
-
+        load_accounts(accounts_df)
+        load_transactions(transactions_df)
         conn.commit()
+
 except Exception as e:
     if conn:
         conn.rollback()
