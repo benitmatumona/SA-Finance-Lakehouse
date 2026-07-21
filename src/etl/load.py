@@ -48,7 +48,7 @@ def load_accounts(accounts_df: pd.DataFrame) -> None:
         )
 
 
-def load_transactions():
+def load_transactions() -> None:
     for row in transactions_df.itertuples():
         cur.execute(
             """
