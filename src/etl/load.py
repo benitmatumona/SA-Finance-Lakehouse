@@ -56,9 +56,9 @@ def connect(
     return conn
 
 
-def load_customers(df: pd.DataFrame, cur: cursor) -> None:
+def load_customers(customers_df: pd.DataFrame, cur: cursor) -> None:
     
-    for row in df.itertuples():
+    for row in customers_df.itertuples():
         cur.execute(
             """
             INSERT INTO customers (customer_id, full_name, province, join_date)
