@@ -44,11 +44,14 @@ def load(
         with connect(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST) as conn:
             with conn.cursor() as cur:
                 logging.info("loading %d customers...", len(customers_df))
-                load_table(CUSTOMER_SQL, customers_df, cur)
+                load_table(customers_df, cur, CUSTOMER_SQL)
+                logging.info("Loaded %d customers", len(customers_df))
                 logging.info("loading %d accounts...", len(accounts_df))
-                load_table(ACCOUNT_SQL, accounts_df, cur)
+                load_table(accounts_df, cur, ACCOUNT_SQL)
+                logging.info("Loaded %d accounts")
                 logging.info("loading %d transactions...", len(transactions_df))
-                load_table(TRANSACTION_SQL, transactions_df, cur)
+                load_table(transactions_df, cur, TRANSACTION_SQL)
+                logging.info("Loaded %d transactions")
             
         logging.info("Data successfully loaded into PostgreSQL.")
 
@@ -67,7 +70,10 @@ def connect(
     )
 
 
-def load_table(df: pd.DataFrame, cur: Cursor, sql: str):
+def load_table(df: pd.DataFrame, cur: Cursor, sql: str) -> None:
+    """
+    Bulk load DataFrame into PostgreSQL,
+    """
     rows = list(
         df.itertuples(index=False, name=None)
     )
@@ -81,7 +87,7 @@ def load_table(df: pd.DataFrame, cur: Cursor, sql: str):
 def bulk_insert(
     cur: Cursor,
     sql: str,
-    rows: list[tuple[Any]],
+    rows: list[tuple[Any, ...]],
 ) -> None:
     execute_values(
         cur,
