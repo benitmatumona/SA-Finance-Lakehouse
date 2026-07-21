@@ -40,8 +40,9 @@ def load_customers(df: pd.DataFrame, *columns)-> None:
 def get_coloumn_list(columns: list[str]):
     return ','.join([column for column in columns])[:-1]
 
+
 def get_prameterised_query(columns: list[str]):
-    return ','.join(["%S" for _ in range(len(columns))])
+    return ','.join(["%s" for _ in range(len(columns))])
 
 
 def load_accounts():
