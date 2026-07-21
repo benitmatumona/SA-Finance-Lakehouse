@@ -23,6 +23,9 @@ logging.basicConfig(
 
 
 def read_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """
+    Read the generated CSV files into pandas DataFrame
+    """
     customers_df = pd.read_csv("data/raw/customers.csv")
     accounts_df = pd.read_csv(
         "data/raw/accounts.csv", 
@@ -40,6 +43,9 @@ def load(
     accounts_df: pd.DataFrame,
     transactions_df: pd.DataFrame,
 ) -> None:
+    """
+    Load all generated data into PostgresSQL
+    """
     try:
         with connect(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST) as conn:
             with conn.cursor() as cur:
