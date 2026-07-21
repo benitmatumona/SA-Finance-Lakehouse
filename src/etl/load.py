@@ -71,6 +71,9 @@ def connect(
     password:str, 
     host: str,
 ) -> psycopg2.extensions.connection:
+    """
+    Create and return a PostgreSQL connecton.
+    """
     return psycopg2.connect(
         dbname=database, user=username, password=password, host=host
     )
