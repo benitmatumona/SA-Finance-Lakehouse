@@ -96,10 +96,10 @@ if __name__ == "__main__":
     customers_df = pd.read_csv("data/raw/customers.csv")
     accounts_df = pd.read_csv(
         "data/raw/accounts.csv", 
-        parse_dates="open_date"
+        parse_dates=["open_date"]
     )
     transactions_df = pd.read_csv(
         "data/raw/transactions.csv", 
-        parse_dates="transaction_date"
+        parse_dates=["transaction_date"]
     )
     load(customers_df, accounts_df, transactions_df)
