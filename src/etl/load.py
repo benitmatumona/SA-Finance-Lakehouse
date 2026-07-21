@@ -21,27 +21,18 @@ def load(
     accounts_df: pd.DataFrame,
     transactions_df: pd.DataFrame,
 ) -> None:
-    
-    conn = None
-    
     try:
-        conn = connect(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST)
-
-        with conn.cursor() as cur:
-            load_customers(customers_df, cur)
-            load_accounts(accounts_df, cur)
-            load_transactions(transactions_df, cur)
+        with connect(DB_NAME, DB_USER, DB_PASSWORD, DB_HOST) as conn:
+            with conn.cursor() as cur:
+                load_customers(customers_df, cur)
+                load_accounts(accounts_df, cur)
+                load_transactions(transactions_df, cur)
             conn.commit()
-            logging.info("Data successfully loaded into PostgreSQL.")
+            
+        logging.info("Data successfully loaded into PostgreSQL.")
 
     except Exception:
-        if conn:
-            conn.rollback()
         logging.exception(f"Database load failed.")
-
-    finally:
-        if conn:
-            conn.close()
 
 
 def connect(
