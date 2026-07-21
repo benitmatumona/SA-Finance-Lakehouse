@@ -18,14 +18,14 @@ def connect(
     username: str, 
     password:str, 
     host: str,
-):
+) -> None:
     conn = psycopg2.connect(
         dbname=database, user=username, password=password, host=host
     )
     return conn
 
 
-def load_customers(df: pd.DataFrame)-> None:
+def load_customers(df: pd.DataFrame) -> None:
     
     for row in df.itertuples():
         cur.execute(
@@ -37,7 +37,7 @@ def load_customers(df: pd.DataFrame)-> None:
         )
 
 
-def load_accounts(accounts_df: pd.DataFrame)-> None:    
+def load_accounts(accounts_df: pd.DataFrame) -> None:    
     for row in accounts_df.itertuples():
         cur.execute(
             """
@@ -70,7 +70,11 @@ def load_transactions():
         )
 
 
-def load():
+def load(
+    customers_df: pd.DataFrame,
+    accounts_df: pd.DataFrame,
+    transactions_df: pd.DataFrame,
+) -> None:
     raise ValueError
 
 try:
