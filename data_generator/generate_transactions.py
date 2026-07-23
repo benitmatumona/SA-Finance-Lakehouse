@@ -85,12 +85,12 @@ def generate_transactions(
 
 
 def generate_transaction(
-                transaction_types,
-                transaction_channels,
-            ):
-                transaction_types = random.choice(tuple(TRANSACTION_TYPES.keys()))
-                transaction_channels = random.choice(TRANSACTION_CHANNELS[transaction_type])
-                return transaction_types, transaction_channels
+    transaction_types,
+    transaction_channels,
+):
+    transaction_types = random.choice(tuple(TRANSACTION_TYPES.keys()))
+    transaction_channels = random.choice(TRANSACTION_CHANNELS[transaction_type])
+    return transaction_types, transaction_channels
 
 
 def generate_amount():
