@@ -31,27 +31,32 @@ def generate_transactions(
         balance = random_number_of_transactions * 5001
 
         for _ in range(random_number_of_transactions):
-            amount = random.choices(
-            population=[
-                random.randint(20, 300),
-                random.randint(301, 1000),
-                random.randint(1001, 5000),
-            ],
-            weights=[70, 25, 5],
-            )[0]
+            amount = generate_amount()
+            transaction_type, transaction_channel = generate_transaction(
+                TRANSACTION_TYPES,
+                TRANSACTION_CHANNELS
+            ),
+
+            def generate_transaction(
+                transaction_types,
+                transaction_channels,
+            ):
+                transaction_types = random.choice(tuple(TRANSACTION_TYPES.keys()))
+                transaction_channels = random.choice(TRANSACTION_CHANNELS[transaction_type])
+            return transaction_type, transaction_channel
+
+        
             transaction_type = random.choice(tuple(TRANSACTION_TYPES.keys()))
-            merchant_name = random.choice(MERCHANTS[transaction_type])
-            reference = TRANSACTION_TYPES[transaction_type].replace(
-                "merchant_name", merchant_name
-            )
-
-            reference = (
-                "EFT DEPOSIT"
-                if reference == "CASH DEPOSIT" and random.random() > 0.5
-                else reference
-            )
-
             transaction_channel = random.choice(TRANSACTION_CHANNELS[transaction_type])
+            merchant_name = random.choice(MERCHANTS[transaction_type])
+
+            reference = generate_reference(
+                TRANSACTION_TYPES, 
+                transaction_type,
+                merchant_name
+            )
+
+            
             is_fraud = is_fraud(
                 amount,
                 transaction_channel,
@@ -89,6 +94,33 @@ def generate_transactions(
             new_data["is_fraud"].append(is_fraud)
     return pd.DataFrame(new_data)
 
+def generate_amount():
+    return random.choices(
+    population=[
+        random.randint(20, 300),
+        random.randint(301, 1000),
+        random.randint(1001, 5000),
+    ],
+    weights=[70, 25, 5],
+    )[0]
+                
+
+
+def generate_reference(
+    transaction_types: dict[str, list[str]],
+    transaction_column: str,
+    merchant_name: str,
+) -> str:
+    reference = transaction_types[transaction_column].replace(
+        "merchant_name", merchant_name
+    )
+
+    return (
+        "EFT DEPOSIT"
+        if reference == "CASH DEPOSIT" and random.random() > 0.5
+        else reference
+    )
+
 
 def is_fraud(
     amount: int,
@@ -117,8 +149,15 @@ def generate_transactions_file():
     )
     fake = Faker()
     transaction_id = itertools.count(start=300001)
-    generated_df = generate_transactions(data)
-    generated_df.to_csv("data/raw/transactions.csv", index=False)
+    generated_df = generate_transactions(
+        data=data, 
+        fake=fake, 
+        transaction_id=transaction_id
+    )
+    generated_df.to_csv(
+        "data/raw/transactions.csv", 
+        index=False
+    )
     os.makedirs("data/raw", exist_ok=True)
 
 
